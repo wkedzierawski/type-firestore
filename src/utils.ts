@@ -11,6 +11,11 @@ const getTypesFromObject = (object: unknown) => {
 	}
 
 	return `{${Object.entries(types)
+		.sort(([nameA], [nameB]) => nameA.localeCompare(nameB))
+		.filter(
+			([name], index, arr) =>
+				arr.findIndex(([itemName]) => itemName === name) === index
+		)
 		.map(([name, type]) => `${name}:${type};`)
 		.join("")}}`;
 };
