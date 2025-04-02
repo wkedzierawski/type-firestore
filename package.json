@@ -1,5 +1,5 @@
 {
-	"name": "typed-firestore",
+	"name": "type-firestore",
 	"version": "0.0.1",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
@@ -8,7 +8,7 @@
 		"url": "https://github.com/wkedzierawski/typed-firestore"
 	},
 	"bin": {
-		"typed-firestore": "dist/index.js"
+		"type-firestore": "dist/index.js"
 	},
 	"scripts": {
 		"build": "tsup"
