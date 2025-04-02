@@ -2,20 +2,22 @@
 import { credential } from "firebase-admin";
 import { initializeApp } from "firebase-admin/app";
 import { getFirestore, CollectionReference } from "firebase-admin/firestore";
-import { writeFileSync } from "fs";
 import { getType } from "./utils";
 import path, { join } from "path";
-import { mkdir } from "fs/promises";
+import { mkdir, writeFile } from "fs/promises";
 import { program } from "commander";
 
 program
 	.argument("<firebase-collection>", "Firebase collection name")
 	.argument("<firebase-admin-config-path>", "Firebase admin config file path")
 	.option("-o, --output <folder>", "Output folder", ".")
+	.option("--limit <number>", "Documents limit for type check", "5")
 	.parse();
 
 const [collection, firebaseAdminJsonPath] = program.args;
-const { output } = program.opts();
+const { output, limit: limitString } = program.opts();
+
+const limit = Number(limitString) || 5;
 
 if (!collection) {
 	throw "Collection not provided!";
@@ -45,15 +47,20 @@ const generateTypesFromCollection = async (
 		return;
 	}
 
-	const fieldTypes: Record<string, Set<string>> = {};
-	const fieldOccurrences: Record<string, number> = {};
-	const totalDocuments = snapshot.size;
-
 	const collectionName = collectionRef.path.split("/").at(-1);
 	if (!collectionName) {
 		console.log(`Collection name not found: ${collectionRef.path}`);
 		return;
 	}
+
+	const firstLetter = collectionName.at(0)?.toUpperCase();
+	const typeName = `${firstLetter}${collectionName.slice(1)}`;
+	const fileName = `${typeName}.types.ts`;
+	const filePath = join(outputDir, fileName);
+
+	const fieldTypes: Record<string, Set<string>> = {};
+	const fieldOccurrences: Record<string, number> = {};
+	const totalDocuments = snapshot.size;
 
 	for (const doc of snapshot.docs) {
 		const data = doc.data();
@@ -68,14 +75,10 @@ const generateTypesFromCollection = async (
 
 		const subCollectionRefs = await doc.ref.listCollections();
 
-		for (const subcollection of subCollectionRefs) {
+		for (const subcollection of subCollectionRefs.slice(0, limit)) {
 			await generateTypesFromCollection(subcollection);
 		}
 	}
-
-	const firstLetter = collectionName.at(0)?.toUpperCase();
-	const typeName = `${firstLetter}${collectionName.slice(1)}`;
-	const fileName = `${typeName}.types.ts`;
 
 	const typeDefinition = `
 	// ${collectionRef.path}
@@ -91,7 +94,7 @@ const generateTypesFromCollection = async (
 
 	try {
 		await mkdir(outputDir, { recursive: true });
-		writeFileSync(join(outputDir, fileName), typeDefinition);
+		await writeFile(filePath, typeDefinition);
 		console.log(`Types saved in ${fileName}`);
 	} catch (error) {
 		console.error(`Failed to save types:`, error);
