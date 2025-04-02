@@ -1,6 +1,6 @@
 {
 	"name": "type-firestore",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.ts",
@@ -11,7 +11,8 @@
 		"type-firestore": "dist/index.js"
 	},
 	"scripts": {
-		"build": "tsup"
+		"build": "tsup",
+		"publish": "tsup && npm publish"
 	},
 	"keywords": [
 		"firebase",
