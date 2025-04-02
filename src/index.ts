@@ -1,9 +1,10 @@
+#!/usr/bin/env node
 import { credential } from "firebase-admin";
 import { initializeApp } from "firebase-admin/app";
 import { getFirestore, CollectionReference } from "firebase-admin/firestore";
 import { writeFileSync } from "fs";
 import { getType } from "./utils";
-import { join } from "path";
+import path, { join } from "path";
 import { mkdir } from "fs/promises";
 import { program } from "commander";
 
@@ -23,7 +24,7 @@ if (!firebaseAdminJsonPath) {
 	throw "Firebase admin credentials path not provided!";
 }
 
-const serviceAccount = require(firebaseAdminJsonPath);
+const serviceAccount = require(path.resolve(firebaseAdminJsonPath));
 
 initializeApp({
 	credential: credential.cert(serviceAccount),

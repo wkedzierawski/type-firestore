@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"bin": {
-		"typed-firestore": "index.js"
+		"typed-firestore": "dist/index.js"
 	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
