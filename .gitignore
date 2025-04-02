@@ -1,7 +1,5 @@
-node_modules
-
-dist
-
-firebase.ts
+/node_modules
+/dist
+.DS_Store
 
 firebase-admin.json
