@@ -34,7 +34,7 @@ const getTypesFromArray = (array: unknown[]) => {
 		}
 	}
 
-	return types.join(" | ");
+	return `(${[...new Set(types)].join(" | ")})[]`;
 };
 
 export const getType = (item: unknown): string => {
