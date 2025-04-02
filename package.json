@@ -12,7 +12,7 @@
 	},
 	"scripts": {
 		"build": "tsup",
-		"publish": "tsup && npm publish"
+		"publish-package": "tsup && npm publish"
 	},
 	"keywords": [
 		"firebase",
