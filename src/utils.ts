@@ -7,17 +7,23 @@ const getTypesFromObject = (object: unknown) => {
 
 	const types: Record<string, string> = {};
 	for (const [key, value] of iterator) {
-		types[key] = typeof value;
+		types[key] = getType(value);
 	}
 
-	return `{${Object.entries(types)
-		.sort(([nameA], [nameB]) => nameA.localeCompare(nameB))
-		.filter(
-			([name], index, arr) =>
-				arr.findIndex(([itemName]) => itemName === name) === index
-		)
-		.map(([name, type]) => `${name}:${type};`)
-		.join("")}}`;
+	const sortedObject = Object.entries(types).sort(([nameA], [nameB]) =>
+		nameA.localeCompare(nameB)
+	);
+
+	const uniqueObject = sortedObject.filter(
+		([name], index, arr) =>
+			arr.findIndex(([itemName]) => itemName === name) === index
+	);
+
+	const mappedObjectTypes = uniqueObject.map(
+		([name, type]) => `${name}:${type}`
+	);
+
+	return `{${mappedObjectTypes.join(";")}}`;
 };
 
 const getTypesFromArray = (array: unknown[]) => {
